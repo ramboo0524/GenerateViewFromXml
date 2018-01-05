@@ -1,7 +1,10 @@
 package com.example.comlier;
 
 import com.example.ResourcesColor;
+import com.example.ResourcesDimen;
+import com.example.ResourcesID;
 import com.example.ResourcesR;
+import com.example.ResourcesString;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 
@@ -100,8 +103,9 @@ public class ActivityInjectProcesser extends AbstractProcessor {
         // get TypeElement  element is class's --->class  TypeElement typeElement = (TypeElement) element
         //  get TypeElement  element is method's ---> TypeElement typeElement = (TypeElement) element.getEnclosingElement();
         TypeElement typeElement = (TypeElement) element;
+        ResourcesR annotation = typeElement.getAnnotation(ResourcesR.class);
         String fullName = typeElement.getQualifiedName().toString();
-        log("method getAnnotatedClass fullName: " + fullName );
+        log("method getAnnotatedClass fullName: " + fullName + " ,annotation.value(): " + annotation.value() ) ;
         AnnotatedClass annotatedClass = mAnnotatedClassMap.get(fullName);
         if (annotatedClass == null) {
             annotatedClass = new AnnotatedClass(typeElement, mElementUtils, mMessager);
@@ -122,6 +126,9 @@ public class ActivityInjectProcesser extends AbstractProcessor {
         Set<String> types = new LinkedHashSet<>();
         types.add(ResourcesR.class.getName());
         types.add(ResourcesColor.class.getName());
+        types.add(ResourcesString.class.getName());
+        types.add(ResourcesDimen.class.getName());
+        types.add(ResourcesID.class.getName());
         return types;
     }
 

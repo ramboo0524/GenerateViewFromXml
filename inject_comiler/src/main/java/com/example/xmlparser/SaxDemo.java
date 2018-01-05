@@ -1,9 +1,5 @@
 package com.example.xmlparser;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.TypeSpec;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -14,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -25,12 +19,9 @@ import javax.xml.parsers.SAXParserFactory;
  */
 public class SaxDemo implements XmlDocument {
 
-    TypeSpec.Builder injectClass ;
-    Element colorElement;
-
-    public SaxDemo(TypeSpec.Builder injectClass, Element element) {
-        this.injectClass = injectClass ;
-        this.colorElement = element ;
+    private XMLElementHandler elementHandler ;
+    public SaxDemo(XMLElementHandler elementHandler) {
+        this.elementHandler = elementHandler;
     }
 
     @Override
@@ -41,13 +32,13 @@ public class SaxDemo implements XmlDocument {
     @Override
     public void parserXml(String filePath) {
 
-        SAXParserFactory saxfac = SAXParserFactory.newInstance();
+        SAXParserFactory saxFac = SAXParserFactory.newInstance();
         try {
 
-            SAXParser saxparser = saxfac.newSAXParser();
+            SAXParser saxparser = saxFac.newSAXParser();
             File file = new File( filePath );
             InputStream is = new FileInputStream(file);
-            saxparser.parse(is, new MySAXHandler(injectClass, colorElement));
+            saxparser.parse(is, new MySAXHandler(elementHandler));
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -57,6 +48,7 @@ public class SaxDemo implements XmlDocument {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
 
@@ -64,34 +56,30 @@ class MySAXHandler extends DefaultHandler {
     boolean hasAttribute = false;
     Attributes attributes = null;
     private String text ;
-    TypeSpec.Builder injectClass ;
-    TypeSpec.Builder colorClass ;
-    Element colorElement;
+    XMLElementHandler xmlElementHandler ;
 
-    public MySAXHandler(TypeSpec.Builder injectClass, Element element){
-        this.injectClass = injectClass ;
-        this.colorElement = element;
-        colorClass = TypeSpec.classBuilder( colorElement.getSimpleName().toString() );
-        colorClass.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
+    public MySAXHandler(XMLElementHandler elementHandler){
+        xmlElementHandler = elementHandler ;
     }
 
     @Override
     public void startDocument() throws SAXException {
         System.out.println("start print document");
+        xmlElementHandler.startDocument();
     }
 
     @Override
     public void endDocument() throws SAXException {
         System.out.println("print document finished");
+        xmlElementHandler.endDoucument();
 
-        injectClass.addType( colorClass.build() );
     }
 
     @Override
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
-        System.out.println("startElement uri: " + uri + ",localName: " + localName + ",qName: " + qName);
-        if( !qName.equals( "color") ){
+//        System.out.println("startElement uri: " + uri + ",localName: " + localName + ",qName: " + qName);
+        if( xmlElementHandler.isRetrict() && !qName.equals( xmlElementHandler.getType() ) ){
             return ;
         }
         if (attributes.getLength() > 0) {
@@ -103,24 +91,23 @@ class MySAXHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
-        if( !qName.equals( "color") ){
+        if( xmlElementHandler.isRetrict() && !qName.equals( xmlElementHandler.getType() ) ){
             return ;
         }
-        if (hasAttribute && (attributes != null) && text != null && text.length() > 0) {
+
+        if (hasAttribute && attributes != null ) {
             for (int i = 0; i < attributes.getLength(); i++) {
-                System.out.println("endElement: " + i + " ,qQname: " + attributes.getQName(i) + ",aValue: " + attributes.getValue(i));
-                ClassName String = ClassName.bestGuess("java.lang.String");
-                FieldSpec.Builder fieldSpec = FieldSpec.builder(String, attributes.getValue(i), Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC );
-                fieldSpec.initializer("$S", text);
-                colorClass.addField(fieldSpec.build());
+                xmlElementHandler.doHandler(attributes.getQName( i ), attributes.getValue(i), text);
             }
         }
     }
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        text = new String(ch, start, length) ;
-        System.out.println("characters: " + new String(ch, start, length));
+        text = new String(ch, start, length).trim() ;
+//        System.out.println("characters: " + text);
     }
+
+
 }
 

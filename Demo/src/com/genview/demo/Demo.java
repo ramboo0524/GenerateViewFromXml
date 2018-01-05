@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.genview.library.ui.ParamIsNotRight;
+import com.genview.library.ui.r.RR;
 import com.genview.library.xmlload.XMLParser;
 
 /**
@@ -62,7 +63,7 @@ public class Demo extends Activity implements OnClickListener {
 
             XMLParser parser = new XMLParser(this);
             try {
-                parser.parseXML(this, "layout_share_dialog.xml");
+                parser.parseXML(this, "res/layout_share_dialog.xml");
 //			parser.parseXML(this, "test4.xml");
             } catch (ParamIsNotRight e) {
                 // TODO Auto-generated catch block
@@ -75,7 +76,7 @@ public class Demo extends Activity implements OnClickListener {
 			 dialog.show();
 
 //			Button btn = (Button) dialog.findViewById(R.id.id_share_cancle );
-			Button btn = (Button) parser.findViewByID( "@+id/id_share_cancle" );
+			Button btn = (Button) parser.findViewByID(RR.GID.id_share_cancle);
 			btn.setOnClickListener(new  View.OnClickListener() {
 
 				@Override

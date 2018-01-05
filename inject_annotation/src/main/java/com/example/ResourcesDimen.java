@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
-public @interface ResourcesColor {
-    String value() ;
-    String type() ;
+public @interface ResourcesDimen {
+
 }
