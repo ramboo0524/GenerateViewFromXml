@@ -1,0 +1,2 @@
+# GenerateViewFromXml
+为SDK开发，能在assert目录下直接使用layout文件生成View
