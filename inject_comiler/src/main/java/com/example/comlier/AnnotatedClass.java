@@ -4,9 +4,10 @@ package com.example.comlier;
 import com.example.ResourcesColor;
 import com.example.ResourcesID;
 import com.example.ResourcesR;
+import com.example.ResourcesString;
 import com.example.xmlparser.SaxDemo;
-import com.example.xmlparser.XMLElementHandler;
 import com.example.xmlparser.XMLIDElementHandler;
+import com.example.xmlparser.XMLSimpleElementHandler;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -64,40 +65,19 @@ public class AnnotatedClass {
             if( enclosedElement.getKind() == ElementKind.CLASS ){
 
                 ResourcesColor colorAnnotation = enclosedElement.getAnnotation(ResourcesColor.class);
-                log( "Element annotation : " + colorAnnotation  ) ;
+//                log( "Element annotation : " + colorAnnotation  ) ;
                 if( colorAnnotation != null ){
-                    XMLElementHandler colorHandler = new XMLElementHandler( "color" , true ) {
 
-                        TypeSpec.Builder colorClass ;
-
-                        @Override
-                        public void startDocument() {
-                            colorClass = TypeSpec.classBuilder( enclosedElement.getSimpleName().toString() );
-                            colorClass.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
-                        }
-
-                        @Override
-                        public void endDoucument() {
-                            injectClass.addType( colorClass.build() );
-                        }
-
-                        @Override
-                        public void doHandler(String attrKey , String attrValue, String text) {
-
-                            if (text != null && text.length() > 0) {
-                                    System.out.println("endElement  qQname: " + attrKey + ",aValue: " + attrValue);
-                                    ClassName String = ClassName.bestGuess("java.lang.String");
-                                    FieldSpec.Builder fieldSpec = FieldSpec.builder(String, attrValue, Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
-                                    fieldSpec.initializer("$S", text);
-                                    colorClass.addField(fieldSpec.build());
-                                    setOK();
-                                }
-                            }
-                    };
-
-                    SaxDemo demo = new SaxDemo( colorHandler );
+                    SaxDemo demo = new SaxDemo( new XMLSimpleElementHandler(colorAnnotation.type(), true, injectClass, enclosedElement.getSimpleName().toString()));
                     demo.parserXml( "./Demo/" + colorAnnotation.value() );
-                    System.out.println("i: " + i + "./Demo/" + colorAnnotation.value());
+                    continue;
+                }
+                ResourcesString stringAnnotation = enclosedElement.getAnnotation(ResourcesString.class);
+//                log( "Element annotation : " + stringAnnotation  ) ;
+                if( stringAnnotation != null ){
+
+                    SaxDemo demo = new SaxDemo( new XMLSimpleElementHandler(stringAnnotation.type(), true, injectClass, enclosedElement.getSimpleName().toString()));
+                    demo.parserXml( "./Demo/" + stringAnnotation.value() );
                     continue;
                 }
                 ResourcesID idAnnotation = enclosedElement.getAnnotation(ResourcesID.class);
@@ -109,12 +89,20 @@ public class AnnotatedClass {
                      log( "file.getPath() : " + file.getPath() ) ;
                     if( file.exists() && file.isDirectory() ){
                         File[] files = file.listFiles();
+                        TypeSpec.Builder layoutClass = TypeSpec.classBuilder( "GLayout" );
+                        layoutClass.addModifiers( Modifier.PUBLIC, Modifier.STATIC );
                         SaxDemo demo = new SaxDemo( idHandler );
                         for(int j = 0 ; j < files.length ; j ++ ){
                             File aFile = files[j] ;
                             log( "aFile : " + aFile.getPath() ) ;
                             demo.parserXml( aFile.getPath() );
+                            String layoutIDName = aFile.getName().substring(0 , aFile.getName().indexOf( ".xml") );
+                            ClassName strClassName = ClassName.bestGuess("java.lang.String");
+                            FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(strClassName, layoutIDName, Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
+                            fieldSpecBuilder.initializer("$S", aFile.getPath() );
+                            layoutClass.addField(fieldSpecBuilder.build());
                         }
+                        injectClass.addType( layoutClass.build() );
                     }
                     idClass.addFields( idHandler.getFieldSpecList() );
                     injectClass.addType( idClass.build() );

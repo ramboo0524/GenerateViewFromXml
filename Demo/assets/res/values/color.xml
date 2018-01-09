@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 标题栏按钮选中颜色 -->
+    <color name="color_title_bar_clicked">#14000000</color>
+    <color name="slide_menu_bg">#61646c</color>
+    <color name="white">#ffffff</color>
+    <color name="color_moeblue">#02D6E5</color>
+
+    <drawable name="drawable_setting_btn_normal">#00ff00</drawable>
+    <drawable name="drawable_setting_btn_pressed">#ff00ff</drawable>
+    
+    <drawable name="drawable_btn_gray_normal">#ccc</drawable>
+    <drawable name="drawable_btn_blue_pressed">#40cade</drawable>
+
+    <drawable name="drawable_btn_black">#000000</drawable>
+    <drawable name="drawable_btn_white">#ffffff</drawable>
+    <drawable name="drawable_btn_half_white">#80ffffff</drawable>
+ <!-- 透明 -->
+    <color name="color_invisiable">#00000000</color>
+
+ <!-- 取消按钮 -->
+    <color name="color_cp_cancle">#3a3c40</color>
+
+  <!-- 首页的按钮 -->
+    <color name="color_take_pic_background">#5fdcee</color>
+    
+    
+ <!-- 编辑按钮 -->
+    <color name="color_editdel_btn">#ff5a5f</color>
+
+ <!-- 分享框的标题栏 -->
+    <color name="color_share_title">#323232</color>
+
+ <!-- 分享框的标题栏 -->
+    <color name="color_share_btntips">#8c8c8c</color>
+
+    <color name="red">#ffff0000</color>
+    <color name="orange">#ffe3432c</color>
+    <color name="black">#ff000000</color>
+    
+    <color name="color_half_alpha_white">#80ffffff</color>
+    
+    <color name="color_half_alpha_black">#80000000</color>
+    
+    <color name="color_titlebar_default_bg">#40CADE</color>
+    
+    <color name="color_diary_bg">#EFF2F2</color>
+    
+    <color name="color_gray_title">#61646c</color>
+    
+    <color name="color_gray_bg">#5b5e66</color>
+    
+</resources>

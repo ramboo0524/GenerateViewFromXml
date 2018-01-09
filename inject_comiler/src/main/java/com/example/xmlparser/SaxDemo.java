@@ -78,34 +78,50 @@ class MySAXHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
-//        System.out.println("startElement uri: " + uri + ",localName: " + localName + ",qName: " + qName);
+        System.out.println("startElement uri: " + uri + ",qName: " + qName + ",isResType: " + xmlElementHandler.isResType());
         if( xmlElementHandler.isRetrict() && !qName.equals( xmlElementHandler.getType() ) ){
             return ;
         }
-        if (attributes.getLength() > 0) {
-            this.attributes = attributes;
-            this.hasAttribute = true;
+        if( xmlElementHandler.isResType() ){
+            if (attributes.getLength() > 0) {
+                this.attributes = attributes;
+                this.hasAttribute = true;
+            }
+        }else{
+            if ( attributes != null ) {
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    System.out.println("startElement uri: " + uri + ",attributes.getQName( i ): " + attributes.getQName( i ) + ",attributes.getValue(i): " + attributes.getValue(i));
+                    xmlElementHandler.doHandler(attributes.getQName( i ), attributes.getValue(i), text);
+                }
+            }
         }
+
+
+
     }
 
     @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
-        if( xmlElementHandler.isRetrict() && !qName.equals( xmlElementHandler.getType() ) ){
-            return ;
-        }
+        if( xmlElementHandler.isResType() ) {
+            if (xmlElementHandler.isRetrict() && !qName.equals(xmlElementHandler.getType())) {
+                System.out.println("endElement isRetrict : " + qName);
+                return;
+            }
 
-        if (hasAttribute && attributes != null ) {
-            for (int i = 0; i < attributes.getLength(); i++) {
-                xmlElementHandler.doHandler(attributes.getQName( i ), attributes.getValue(i), text);
+            if (hasAttribute && attributes != null) {
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    xmlElementHandler.doHandler(attributes.getQName(i), attributes.getValue(i), text);
+                }
             }
         }
     }
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        text = new String(ch, start, length).trim() ;
-//        System.out.println("characters: " + text);
+        if( xmlElementHandler.isResType() ) {
+            text = new String(ch, start, length).trim();
+        }
     }
 
 

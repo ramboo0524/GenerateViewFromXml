@@ -10,11 +10,14 @@ public abstract class XMLElementHandler {
 
     public boolean isOK ;
 
+    public boolean resType ;
+
     public boolean isRetrict ;
 
-    public XMLElementHandler( String type , boolean isRetrict){
+    public XMLElementHandler( String type , boolean isRetrict, boolean isResType){
         this.type = type ;
         this.isRetrict = isRetrict ;
+        resType = isResType ;
     }
 
     public abstract void startDocument();
@@ -39,4 +42,7 @@ public abstract class XMLElementHandler {
         return isRetrict;
     }
 
+    public boolean isResType() {
+        return resType;
+    }
 }

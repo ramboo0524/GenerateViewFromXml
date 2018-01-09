@@ -63,8 +63,8 @@ public class Demo extends Activity implements OnClickListener {
 
             XMLParser parser = new XMLParser(this);
             try {
-                parser.parseXML(this, "res/layout_share_dialog.xml");
-//			parser.parseXML(this, "test4.xml");
+                parser.parseXML(this, "res/layout/layout_share_dialog.xml");
+//				parser.parseXML(this, RR.GLayout.layout_share_dialog );
             } catch (ParamIsNotRight e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -76,7 +76,7 @@ public class Demo extends Activity implements OnClickListener {
 			 dialog.show();
 
 //			Button btn = (Button) dialog.findViewById(R.id.id_share_cancle );
-			Button btn = (Button) parser.findViewByID(RR.GID.id_share_cancle);
+			Button btn = (Button) parser.findViewByID( RR.GID.id_share_cancle );
 			btn.setOnClickListener(new  View.OnClickListener() {
 
 				@Override
